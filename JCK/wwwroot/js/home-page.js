@@ -1,5 +1,3 @@
-import "./auth.js";
-
 const apiUrl = '/api/Listing'; 
 
 async function fetchListings() {
