@@ -1,4 +1,6 @@
-const apiUrl = 'http://localhost:5130/api/Listing'; 
+import "./auth.js";
+
+const apiUrl = '/api/Listing'; 
 
 async function fetchListings() {
     try {
