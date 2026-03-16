@@ -20,6 +20,7 @@ public class ListingController : ControllerBase // inherits from controller base
         return Ok(products); // Returns JSON
     }
 
+
     [HttpPost]
     public async Task<IActionResult> CreateListing(Listing listing)
     {
