@@ -31,4 +31,19 @@ public class ListingController : ControllerBase // inherits from controller base
     }
 
 
+    [HttpDelete]
+    public async Task<IActionResult> DeleteListing(int id)
+    {
+        var listing = await _context.Listings.FindAsync(id);
+
+        if (listing == null)
+            return NotFound();
+
+        _context.Listings.Remove(listing);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+
 }
