@@ -13,10 +13,14 @@ public class ListingController : ControllerBase // inherits from controller base
         _context = context;
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetProducts()
+    [HttpGet("id")]
+    public async Task<IActionResult> GetProducts() 
     {
         var products = await _context.Listings.ToListAsync();
+        
+        if (products == null)
+            return BadRequest();
+        
         return Ok(products); // Returns JSON
     }
 
@@ -31,7 +35,7 @@ public class ListingController : ControllerBase // inherits from controller base
     }
 
 
-    [HttpDelete]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteListing(int id)
     {
         var listing = await _context.Listings.FindAsync(id);
