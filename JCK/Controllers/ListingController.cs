@@ -14,10 +14,14 @@ public class ListingController : ControllerBase // inherits from controller base
         _context = context;
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetProducts()
+    [HttpGet("id")]
+    public async Task<IActionResult> GetProducts() 
     {
         var products = await _context.Listings.ToListAsync();
+        
+        if (products == null)
+            return BadRequest();
+        
         return Ok(products); // Returns JSON
     }
 
@@ -38,5 +42,31 @@ public class ListingController : ControllerBase // inherits from controller base
         ).ToListAsync();
 
         return Ok(results);
-    }           
+    }  
+             
+    [HttpPost]
+    public async Task<IActionResult> CreateListing(Listing listing)
+    {
+        _context.Listings.Add(listing);
+        await _context.SaveChangesAsync();
+
+        return CreatedAtAction(nameof(GetProducts), new { id = listing.Id }, listing);
+    }
+
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteListing(int id)
+    {
+        var listing = await _context.Listings.FindAsync(id);
+
+        if (listing == null)
+            return NotFound();
+
+        _context.Listings.Remove(listing);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+
 }
