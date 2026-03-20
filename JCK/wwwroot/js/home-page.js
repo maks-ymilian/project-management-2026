@@ -1,7 +1,7 @@
 const apiUrl = '/api/Listing'; 
 
 //fetch listing general 
-async function fetchListings() {
+export async function fetchListings() {
     try {
         const response = await fetch(apiUrl);
         if (!response.ok) throw new Error(`${response.status}`);
