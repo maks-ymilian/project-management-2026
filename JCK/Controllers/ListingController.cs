@@ -14,7 +14,7 @@ public class ListingController : ControllerBase // inherits from controller base
         _context = context;
     }
 
-    [HttpGet("id")]
+    [HttpGet]
     public async Task<IActionResult> GetProducts() 
     {
         var products = await _context.Listings.ToListAsync();
@@ -35,15 +35,16 @@ public class ListingController : ControllerBase // inherits from controller base
         if (string.IsNullOrWhiteSpace(query))
             return Ok(new List<Listing>());
 
-        var results = _context.Listings.Where(listing => listing.CarName.ToLower().Contains(query.ToLower())).Select(listing => new
+        var results = await _context.Listings.Where(listing => listing.CarName.Contains(query.ToLower())).Select(listing => new
         {
-            listing.CarName
+        id =  listing.Id,
+        carName = listing.CarName
         }
         ).ToListAsync();
 
         return Ok(results);
     }  
-             
+
     [HttpPost]
     public async Task<IActionResult> CreateListing(Listing listing)
     {
