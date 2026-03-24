@@ -24,6 +24,18 @@ public class ListingController : ControllerBase // inherits from controller base
         return Ok(products); // Returns JSON
     }
 
+    [HttpGet("recommended")]
+    public async Task<IActionResult> GetRecommendedListings(string customerLocation)
+    {
+        var listings = await _context.Listings.ToListAsync();
+
+        var recommended = listings
+            .Where(l => l.CarLocation.ToLower() == customerLocation.ToLower())
+            .ToList();
+
+        return Ok(recommended);
+    }
+
 
     [HttpPost]
     public async Task<IActionResult> CreateListing(Listing listing)

@@ -11,7 +11,7 @@ public class Listing
     public int Review{ get; set; }
 
     // Location
-    public string Location { get; set; } = string.Empty;
+    public string CarLocation { get; set; } = string.Empty;
 
     // Availability
     public bool IsAvailable { get; set; } = true;
@@ -24,6 +24,7 @@ public class Listing
 
     //Customer
     public string RenterId { get; set; }
+    public string CustomerLocation { get; set; } = string.Empty;
     
 
     
