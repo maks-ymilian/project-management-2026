@@ -4,10 +4,10 @@ using JCK.Data;
 var builder = WebApplication.CreateBuilder(args);
 
 // register the AppDbContext which holds the tables
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection"); // gets the string from the file appsettings.Development.json, the password in this file needs to be the same as the root password in mysql
+var connectionString = Environment.GetEnvironmentVariable("SUPABASE_CONNECTION_STRING");
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
-);
+    options.UseNpgsql(connectionString));
+Console.WriteLine("Connection string: " + connectionString);
 
 builder.Services.AddControllers(); // <-- Required
 
