@@ -1,3 +1,5 @@
+import { shake_element } from '/js/common.js'
+
 const car_name = "Car name";
 const owner_name = "name";
 const owner_image = "/images/user.jpg";
@@ -228,12 +230,6 @@ try {
         review_input_box.style.display = "block";
     else
         review_input_box.style.display = "none";
-
-    function shake_element(element)
-    {
-        element.classList.add("shake");
-        element.addEventListener("animationend", () => element.classList.remove("shake"), {once: true});
-    }
 
     post_review_button.addEventListener("click", () => {
         let error = false;

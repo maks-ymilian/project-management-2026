@@ -1,3 +1,5 @@
+import { get_location } from '/js/location.js'
+
 async function fetchListings(query) {
     try {
         let response;
@@ -31,18 +33,6 @@ listings.forEach(item => {
     `);
 });
 
-if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition((position) => {
-        fetch(`https://api.tomtom.com/search/2/reverseGeocode/${position.coords.latitude},${position.coords.longitude}.json?key=6YBNUuGNfg3XDVzZ96l62pEKJUGlJk34&radius=100`)
-            .then((response) => {
-                if (!response.ok)
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                return response.json();
-            })
-            .then((data) => {
-                title.innerHTML = "Cars in " + data.addresses[0].address.municipality;
-            })
-            .catch((error) => console.error("Error fetching reverse geocode:", error));
-    });
-} 
-
+get_location((location) => {
+    title.innerHTML = "Cars in " + location;
+});

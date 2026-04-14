@@ -90,7 +90,7 @@ input[type="date"] {
     white-space: nowrap;
 }
 
-textarea {
+textarea, input {
     height: fit-content;
     appearance: none;
     border: 2px solid #aaa;

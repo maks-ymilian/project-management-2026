@@ -1,0 +1,14 @@
+.error-container {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.error-text {
+    width: 0;
+    min-width: 100%;
+    display: block;
+    margin: 0;
+    text-align: left;
+}
+
