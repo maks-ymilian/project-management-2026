@@ -150,7 +150,7 @@ create_button.addEventListener("click", async () => {
     };
 
     //post logic 
-    fetch("http://localhost:5130/api/listing", {
+    fetch("/api/listing", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
