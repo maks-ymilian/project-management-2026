@@ -21,9 +21,7 @@
     <form action="/create-listing/" method="get">
         <button class="top-btn">Create a listing</button>
     </form>
-
-    <button id="checkout-button" class="top-btn">Checkout</button>
-</div>
+    </div>
 
     <!-- Search Bar -->
     <div class="searchBar">
@@ -37,33 +35,8 @@
         </div>
     </div>
 
-     
-      <script>
-document.getElementById("checkout-button").addEventListener("click", async () => {
-    try {
-        const response = await fetch("http://localhost:5130/api/checkout", {
-            method: "POST"
-        });
-
-        const data = await response.json();
-
-        console.log("Stripe URL:", data.url);
-
-       
-        window.location.href = data.url;
-
-    } catch (error) {
-        console.error("Checkout failed:", error);
-    }
-});
-</script>
-
     <script type="module" src="/js/auth-setup.js"></script>
     <script type="module" src="/js/home-page.js"></script>
     <script type="module" src="/js/search.js"></script>
-
-    <script type="module" src="js/auth-setup.js"></script>
-    <script type="module" src="js/home-page.js"></script>
-    <script type="module" src="js/search.js"></script>
 </body>
 </html>

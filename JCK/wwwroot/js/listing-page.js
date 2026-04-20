@@ -4,6 +4,11 @@ import { getUser, getUserId } from './auth.js'
 try {
     const params = new URLSearchParams(window.location.search);
     const id = params.get("id");
+    const checkout_state = params.get("checkout_state");
+    if (checkout_state === "success")
+        alert("Car successfully booked. You can find it in your booking history");
+    else if (checkout_state === "cancel")
+        alert("Booking cancelled");
 
     let listing;
     let reviewData;
@@ -238,12 +243,6 @@ try {
     else
         review_input_box.style.display = "none";
 
-    //function shake_element(element)
-    //{
-    //    element.classList.add("shake");
-    //    element.addEventListener("animationend", () => element.classList.remove("shake"), {once: true});
-    //} Removing to avoid errors because of duplicate function declaration. This is imported from common.js
-
     post_review_button.addEventListener("click", () => {
         let error = false;
 
@@ -368,20 +367,21 @@ try {
         if (!update_book_ui(true, true))
             return;
 
-        const response = await fetch(`/api/listing/${id}/book`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ user_id: getUserId(), start_date: from_date.value, end_Date: to_date.value }),
-        })
-        if (response.status != 200) {
-            if (response.status == 400)
-                alert("Couldn't submit booking: " + await response.text())
-            else
-                alert("Something went wrong")
-            return;
-        }
+        try {
+            const response = await fetch("/api/checkout", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({listing_id: id, user_id: getUserId(), start_date: from_date.value, end_Date: to_date.value}),
+            });
+            if (response.status != 200)
+                throw new Error(await response.text());
 
-        alert("Booking submitted!");
+            const data = await response.json();
+            window.location.href = data.url;
+        } catch (error) {
+            console.error("Checkout failed:", error);
+            alert("Checkout failed: " + error);
+        }
     });
 
     update_book_ui(false); // update on page refresh

@@ -127,38 +127,6 @@ public class ListingController : ControllerBase // inherits from controller base
         });
     }
 
-    public class BookingRequest
-    {
-        public string? user_id { get; set; }
-        public DateTime start_date { get; set; }
-        public DateTime end_date { get; set; }
-    }
-
-    [HttpPost("{id}/book")]
-    public async Task<IActionResult> AddBooking(int id, [FromBody] BookingRequest data)
-    {
-        if (await _context.Bookings.FirstOrDefaultAsync(x => x.UserId == data.user_id && x.ListingId == id) != null)
-            return StatusCode(400, "User already submitted booking");
-
-        Listing? listing = await _context.Listings.FindAsync(id);
-        if (listing == null)
-            return NotFound();
-
-        if (data.start_date < listing.StartDate.ToDateTime(TimeOnly.MinValue)) return StatusCode(400, "Input start date is before listing start date");
-        if (data.end_date > listing.EndDate.ToDateTime(TimeOnly.MinValue))     return StatusCode(400, "Input end date is after listing end date");
-        if (data.start_date > data.end_date)                                   return StatusCode(400, "Start date is after end date");
-
-        _context.Bookings.Add(new Booking { 
-            ListingId = id,
-            UserId = data.user_id,
-            StartDate = DateOnly.FromDateTime(data.start_date),
-            EndDate = DateOnly.FromDateTime(data.end_date),
-        });
-        await _context.SaveChangesAsync();
-
-        return Ok();
-    }
-
     private List<Image> GetListingImages(int listing_id)
     { 
         return _context.Images.Where(image => image.ListingId == listing_id).OrderBy(image => image.Index).ToList();
