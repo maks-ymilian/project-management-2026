@@ -7,7 +7,14 @@ body {
     padding: 0;
 }
 
-
+.header-bar {
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 999;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05);
+    padding: 12px 0;
+}
 
 .searchBar {
     display: flex;
@@ -140,36 +147,81 @@ input[type="date"] {
 /* ===== Top Buttons ===== */
 .top-buttons {
     position: fixed;
-    top: 13px;
+    top: 33px;
     left: 20px;
     display: flex;
-    gap: 10px;
+    gap: 12px;
     z-index: 1000;
     align-items: center;
 }
 
-.top-buttons form {
-    margin: 0;
-}
-
+/* ===== Modern Button Base ===== */
 .top-btn {
-    background-color: #222;
-    color: white;
-    border: none;
-    height: 40px;
-    min-width: 140px;
-    padding: 0 14px;
-    border-radius: 8px;
-    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+
+    padding: 10px 18px;
+    min-width: 150px;
+
+    border-radius: 9999px;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    background: rgba(20, 20, 20, 0.85);
+    backdrop-filter: blur(12px);
+
+    color: #fff;
     font-size: 14px;
+    font-weight: 500;
+
+    cursor: pointer;
+
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: 0.2s ease;
+
+    transition: all 0.25s ease;
+
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
 }
 
+/* ===== Hover (modern lift effect) ===== */
 .top-btn:hover {
-    background-color: #444;
+    transform: translateY(-2px);
+    background: rgba(40, 40, 40, 0.95);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+}
+
+/* ===== Click effect ===== */
+.top-btn:active {
+    transform: translateY(0px) scale(0.98);
+}
+
+/* ===== Subtle animated shine effect ===== */
+.top-btn::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -75%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255,255,255,0.15),
+        transparent
+    );
+    transform: skewX(-20deg);
+}
+
+.top-btn:hover::after {
+    animation: shine 0.6s ease;
+}
+
+@keyframes shine {
+    100% {
+        left: 130%;
+    }
 }
 
 /* ===== Listing Card Carousel ===== */
@@ -341,4 +393,12 @@ input[type="date"] {
     grid-template-columns: repeat(5, 1fr);
     gap: 24px;
     padding-bottom: 40px;
+}
+
+#title {
+    font-size: 22px;
+    font-weight: 600;
+    color: #222;
+    margin: 24px 0 16px;
+    letter-spacing: -0.3px;
 }
