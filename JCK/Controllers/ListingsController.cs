@@ -42,14 +42,18 @@ public class ListingController : ControllerBase // inherits from controller base
         if (string.IsNullOrWhiteSpace(query))
             return Ok(new List<Listing>());
 
-        var results = await _context.Listings.Where(listing => listing.CarName.Contains(query.ToLower())).Select(listing => new
+        var listings = await _context.Listings.Where(listing => listing.CarName.Contains(query.ToLower())).ToListAsync();
+        return Ok(listings.Select(listing => new
         {
-            id = listing.Id,
-            carName = listing.CarName
-        }
-        ).ToListAsync();
-
-        return Ok(results);
+            Id = listing.Id,
+            userId = listing.UserId,
+            carName = listing.CarName,
+            description = listing.Description,
+            price = listing.Price,
+            startDate = listing.StartDate,
+            endDate = listing.EndDate,
+            images = GetListingImageURLs(listing.Id),
+        }));
     }
 
     //post for making a listing 
