@@ -11,9 +11,11 @@
   "license": "ISC",
   "type": "module",
   "devDependencies": {
-    "jest": "^30.3.0"
+    "jest": "^30.3.0",
+    "jest-environment-jsdom": "^30.3.0"
   },
   "dependencies": {
     "@clerk/clerk-js": "^6.7.2"
   }
+  
 }

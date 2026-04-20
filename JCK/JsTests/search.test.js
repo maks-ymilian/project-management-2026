@@ -1,8 +1,11 @@
-import { get_location } from './location.js';
+import { jest } from '@jest/globals';
 
-jest.mock('./location.js', () => ({
+jest.unstable_mockModule('../wwwroot/js/location.js', () => ({
   get_location: jest.fn()
 }));
+
+const { get_location } = await import('../wwwroot/js/location.js');
+const { default: searchScript } = await import('../wwwroot/js/search.js');
 
 describe('search script', () => {
   let searchBox;
@@ -16,20 +19,18 @@ describe('search script', () => {
 
     delete window.location;
     window.location = { href: "" };
-
-    jest.resetModules(); // important because script runs on import
   });
 
-  test('sets placeholder using location', async () => {
+  test('sets placeholder using location', () => {
     get_location.mockImplementation((cb) => cb("Dublin"));
 
-    await import('./yourScriptFile.js');
+    searchScript(); // <-- IMPORTANT: run manually
 
     expect(searchBox.placeholder).toBe("Search in Dublin");
   });
 
-  test('redirects on Enter key', async () => {
-    await import('./yourScriptFile.js');
+  test('redirects on Enter key', () => {
+    searchScript();
 
     searchBox.value = "test query";
 
@@ -39,8 +40,8 @@ describe('search script', () => {
     expect(window.location.href).toBe("/?search=test%20query");
   });
 
-  test('does nothing on non-Enter key', async () => {
-    await import('./yourScriptFile.js');
+  test('does nothing on non-Enter key', () => {
+    searchScript();
 
     searchBox.value = "test query";
 

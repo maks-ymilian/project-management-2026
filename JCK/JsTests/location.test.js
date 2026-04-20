@@ -1,3 +1,4 @@
+import { jest } from '@jest/globals';
 import { get_location } from "../wwwroot/js/location.js";
 
 describe("location.js", () => {
@@ -20,7 +21,7 @@ describe("location.js", () => {
     test("does nothing if geolocation unavailable", () => {
         const callback = jest.fn();
 
-        delete navigator.geolocation;
+        navigator.geolocation = undefined;
 
         get_location(callback);
 
@@ -50,10 +51,12 @@ describe("location.js", () => {
             })
         });
 
-        get_location(callback);
-
-        await Promise.resolve();
-        await Promise.resolve();
+        await new Promise(resolve => {
+            get_location((value) => {
+                callback(value);
+                resolve();
+            });
+        });
 
         expect(callback).toHaveBeenCalledWith("Dublin");
         expect(sessionStorage.getItem("location")).toBe("Dublin");
