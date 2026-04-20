@@ -1,44 +1,73 @@
+/* ===== Base Styles ===== */
 body {
-    font-family: Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
     background-color: white;
     color: #333;
     margin: 0;
     padding: 0;
 }
 
-.card, .container {
+.header-bar {
+    position: sticky;
+    top: 0;
     background: white;
-    border-radius: 8px;
-    box-shadow: 0 0 14px rgba(0,0,0,0.14);
-}
-
-.container {
-    max-width: 900px;
-    margin: 50px auto;
-    padding: 20px;
+    z-index: 999;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05);
+    padding: 12px 0;
 }
 
 .searchBar {
-    display: flex !important;
-    justify-content: center !important;   
+    display: flex;
+    justify-content: center;
     width: 100%;
-    margin-bottom: 20px 0;
-    margin-top: 20px;
-}   
+    margin: 30px 0;
+}
 
 #searchBox {
-    width: 800px;
-    padding: 10px;
-    font-size: 16px;
+    width: 100%;
+    max-width: 820px;
+    padding: 14px 18px;
+    font-size: 15px;
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 9999px;
+
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+
+    box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+
+    transition: all 0.2s ease;
+    outline: none;
 }
 
-#user-button{
-  position: fixed;
-  top: 20px;
-  right: 220px;
-  z-index: 1000;
+/* Hover effect */
+#searchBox:hover {
+    box-shadow: 0 8px 25px rgba(0,0,0,0.10);
+    transform: translateY(-1px);
 }
 
+/* Focus effect (important UX) */
+#searchBox:focus {
+    border: 1px solid rgba(225, 88, 73, 0.6);
+    box-shadow: 0 0 0 4px rgba(225, 88, 73, 0.15),
+                0 10px 30px rgba(0,0,0,0.12);
+}
+
+/* Placeholder styling */
+#searchBox::placeholder {
+    color: rgba(0,0,0,0.45);
+    font-size: 14px;
+}
+
+/* ===== User Button ===== */
+#user-button {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+/* ===== Links & Lists ===== */
 a {
     color: inherit;
     text-decoration: none;
@@ -54,17 +83,17 @@ li {
     border-bottom: 1px solid #ddd;
 }
 
+/* ===== Buttons ===== */
 button {
-    height: fit-content;
     appearance: none;
     border: none;
     background-color: #e15849;
     font-size: 16px;
     padding: 10px 22px;
-    border-radius: 99999px;
+    border-radius: 9999px;
     cursor: pointer;
     color: white;
-    transition: 0.04s ease-out;
+    transition: 0.1s ease;
     white-space: nowrap;
 }
 
@@ -76,34 +105,33 @@ button:active {
     transform: scale(0.97);
 }
 
-input[type="date"] {
-    height: fit-content;
-    appearance: none;
-    border: 2px solid #aaa;
-    color: #444444;
-    font-size: 18px;
-    padding: 10px 22px;
-    border-radius: 99999px;
-    cursor: pointer;
-    transition: 0.08s;
-    font: inherit;
-    white-space: nowrap;
-}
-
+/* ===== Inputs ===== */
 textarea, input {
-    height: fit-content;
-    appearance: none;
+    width: 100%;
+    box-sizing: border-box;
     border: 2px solid #aaa;
-    font-size: 20px;
+    font-size: 16px;
     padding: 10px;
-    cursor: pointer;
-    font: inherit;
     border-radius: 10px;
+    font: inherit;
 }
 
+input[type="date"] {
+    border-radius: 9999px;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+/* ===== Error Handling ===== */
 .error {
     display: none;
     color: #bb0000;
+    font-size: 13px;
+}
+
+.error-container {
+    flex: 1;
+    min-width: 0; /* 🔥 CRITICAL FIX */
 }
 
 @keyframes shake {
@@ -116,39 +144,261 @@ textarea, input {
     animation: shake 0.2s;
 }
 
-
-
+/* ===== Top Buttons ===== */
 .top-buttons {
     position: fixed;
-    top: 13px;
-    left: 20px;   /* changed from right to left */
+    top: 49px;
+    left: 20px;
     display: flex;
-    flex-direction: row; 
-    gap: 10px;
+    gap: 12px;
     z-index: 1000;
     align-items: center;
 }
 
-.top-buttons form {
-    margin: 0;
-}
-
+/* ===== Modern Button Base ===== */
 .top-btn {
-    background-color: #222;
-    color: white;
-    border: none;
-    height: 40px;       
-    min-width: 140px;    
-    padding: 0 14px;    
-    border-radius: 8px;
-    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+
+    padding: 10px 18px;
+    min-width: 150px;
+
+    border-radius: 9999px;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    background: rgba(20, 20, 20, 0.85);
+    backdrop-filter: blur(12px);
+
+    color: #fff;
     font-size: 14px;
+    font-weight: 500;
+
+    cursor: pointer;
+
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: 0.2s ease;
+
+    transition: all 0.25s ease;
+
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
 }
 
+/* ===== Hover (modern lift effect) ===== */
 .top-btn:hover {
-    background-color: #444;
+    transform: translateY(-2px);
+    background: rgba(40, 40, 40, 0.95);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+}
+
+/* ===== Click effect ===== */
+.top-btn:active {
+    transform: translateY(0px) scale(0.98);
+}
+
+/* ===== Subtle animated shine effect ===== */
+.top-btn::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -75%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255,255,255,0.15),
+        transparent
+    );
+    transform: skewX(-20deg);
+}
+
+.top-btn:hover::after {
+    animation: shine 0.6s ease;
+}
+
+@keyframes shine {
+    100% {
+        left: 130%;
+    }
+}
+
+/* ===== Listing Card Carousel ===== */
+.listing-card {
+    cursor: pointer;
+}
+
+.listing-card .img-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #e0e0e0;
+}
+
+.listing-card .slides {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.3s ease;
+}
+
+.listing-card .slide {
+    min-width: 100%;
+    height: 100%;
+    flex-shrink: 0;
+}
+
+.listing-card .slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.listing-card .nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 2;
+}
+
+.listing-card .img-wrap:hover .nav-btn {
+    opacity: 1;
+}
+
+.listing-card .nav-btn.prev { left: 8px; }
+.listing-card .nav-btn.next { right: 8px; }
+
+.listing-card .dots {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 4px;
+    z-index: 2;
+}
+
+.listing-card .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.6);
+    transition: 0.2s;
+}
+
+.listing-card .dot.active {
+    background: white;
+    transform: scale(1.2);
+}
+
+.listing-card .heart-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    z-index: 2;
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+.listing-card .heart-btn svg {
+    width: 24px;
+    height: 24px;
+    stroke: white;
+    stroke-width: 2;
+    fill: rgba(0,0,0,0.25);
+    transition: 0.15s;
+}
+
+.listing-card .heart-btn.liked svg {
+    fill: #FF385C;
+    stroke: #FF385C;
+}
+
+.listing-card .card-info {
+    padding: 12px 0 0;   /* was 10px 2px 0 */
+}
+
+.listing-card .card-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.listing-card .card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #222;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+}
+
+.listing-card .card-rating {
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.listing-card .card-sub {
+    font-size: 14px;     /* was 13px */
+    color: #717171;
+    margin-top: 2px;
+}
+
+.listing-card .card-price {
+    font-size: 14px;
+    color: #222;
+    margin-top: 2px;
+}
+
+.listing-card .card-price strong {
+    font-weight: 600;
+}
+
+.listing-card .nav-btn {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.18);
+}
+
+.listing-card:hover .card-title {
+    text-decoration: underline;
+}
+
+.container {
+    width: 100%;
+    padding: 0 24px;
+    box-sizing: border-box;
+}
+
+#listing-container {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 24px;
+    padding-bottom: 40px;
+}
+
+#title {
+    font-size: 22px;
+    font-weight: 600;
+    color: #222;
+    margin: 24px 0 16px;
+    letter-spacing: -0.3px;
 }
