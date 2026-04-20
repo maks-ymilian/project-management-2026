@@ -51,6 +51,9 @@ public class CheckoutController : ControllerBase
         }
         await _context.SaveChangesAsync();
 
+        int num_days = (booking.EndDate.DayNumber - booking.StartDate.DayNumber) + 1;
+        long price = (long)listing.Price * num_days * 100;
+
         try
         {
             string base_url = $"{Request.Scheme}://{Request.Host}";
@@ -66,8 +69,8 @@ public class CheckoutController : ControllerBase
                         Quantity = 1,
                         PriceData = new SessionLineItemPriceDataOptions {
                             Currency = "eur",
-                            UnitAmount = 2000, // €20
-                            ProductData = new SessionLineItemPriceDataProductDataOptions {Name = "Car Rental"},
+                            UnitAmount = price,
+                            ProductData = new SessionLineItemPriceDataProductDataOptions {Name = listing.CarName},
                         },
                     },
                 ],
