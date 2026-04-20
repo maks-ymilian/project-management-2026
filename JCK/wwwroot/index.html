@@ -38,26 +38,7 @@
     </div>
 
      
-      <script>
-document.getElementById("checkout-button").addEventListener("click", async () => {
-    try {
-        const response = await fetch("http://localhost:5130/api/checkout", {
-            method: "POST"
-        });
-
-        const data = await response.json();
-
-        console.log("Stripe URL:", data.url);
-
-       
-        window.location.href = data.url;
-
-    } catch (error) {
-        console.error("Checkout failed:", error);
-    }
-});
-</script>
-
+    <script type="module" src="js/checkout.js"></script>
     <script type="module" src="/js/auth-setup.js"></script>
     <script type="module" src="/js/home-page.js"></script>
     <script type="module" src="/js/search.js"></script>
