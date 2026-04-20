@@ -115,3 +115,40 @@ textarea, input {
 .shake {
     animation: shake 0.2s;
 }
+
+
+
+.top-buttons {
+    position: fixed;
+    top: 13px;
+    left: 20px;   /* changed from right to left */
+    display: flex;
+    flex-direction: row; 
+    gap: 10px;
+    z-index: 1000;
+    align-items: center;
+}
+
+.top-buttons form {
+    margin: 0;
+}
+
+.top-btn {
+    background-color: #222;
+    color: white;
+    border: none;
+    height: 40px;       
+    min-width: 140px;    
+    padding: 0 14px;    
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s ease;
+}
+
+.top-btn:hover {
+    background-color: #444;
+}

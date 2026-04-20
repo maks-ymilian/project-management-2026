@@ -17,9 +17,13 @@
     <!-- Clerk plugin -->
     <div id="user-button" style="position: fixed; top: 20px; right: 20px; z-index: 1000;"></div>
 
-    <form style="display: inline" action="create-listing/" method="get">
-        <button style="position: fixed; top: 13px; right: 70px">Create a listing</button>
+   <div class="top-buttons">
+    <form action="/create-listing/" method="get">
+        <button class="top-btn">Create a listing</button>
     </form>
+
+    <button id="checkout-button" class="top-btn">Checkout</button>
+</div>
 
     <!-- Search Bar -->
     <div class="searchBar">
@@ -29,8 +33,34 @@
     <!-- Main Container -->
     <div class="container">
         <h1 id="title">Cars nearby</h1>
-        <div id="listing-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin: 10px 0px"></div>
+        <div id="listing-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin: 10px 0px">
+        </div>
     </div>
+
+     
+      <script>
+document.getElementById("checkout-button").addEventListener("click", async () => {
+    try {
+        const response = await fetch("http://localhost:5130/api/checkout", {
+            method: "POST"
+        });
+
+        const data = await response.json();
+
+        console.log("Stripe URL:", data.url);
+
+       
+        window.location.href = data.url;
+
+    } catch (error) {
+        console.error("Checkout failed:", error);
+    }
+});
+</script>
+
+    <script type="module" src="/js/auth-setup.js"></script>
+    <script type="module" src="/js/home-page.js"></script>
+    <script type="module" src="/js/search.js"></script>
 
     <script type="module" src="js/auth-setup.js"></script>
     <script type="module" src="js/home-page.js"></script>

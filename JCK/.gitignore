@@ -1,0 +1,10 @@
+bin/
+obj/
+.vs/
+*.user
+*.suo
+*.log
+*.sln
+node_modules/
+package-lock.json
+.vscode/
