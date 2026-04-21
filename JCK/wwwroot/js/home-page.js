@@ -143,8 +143,8 @@ async function loadListings() {
             const response = await fetch(`/api/Listing/${item.id}`);
             const data = await response.json();
             const images = data.images ?? [];
-            const average_rating = (data.average_rating !== undefined && data.average_rating !== null)
-            ? data.average_rating
+            const average_rating = (data.review !== undefined && data.review !== null)
+            ? data.review
              : -1
             const loc = item.carLocation?.trim().toLowerCase();
 
