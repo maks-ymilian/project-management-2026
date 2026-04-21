@@ -24,8 +24,8 @@ get_location(async (loc) => {
 
 function render(container, data) {
     container.innerHTML = "";
-    for (const { item, images } of data) {
-        container.insertAdjacentHTML("beforeend", createCard(item, images));
+    for (const { item, images, average_rating } of data) {
+        container.insertAdjacentHTML("beforeend", createCard(item, images, average_rating ?? -1));
     }
 }
 
@@ -115,41 +115,40 @@ async function loadListings() {
     const query = params.get("search");
     const listings = await fetchListings(query);
 
-    console.log("query:", query);
-    console.log("listings:", listings)
-
     const searchTitle = document.getElementById("search-title");
     const searchContainer = document.getElementById("search-container");
+    const searchSections = document.getElementById("search-sections");
     const defaultSections = document.getElementById("default-sections");
 
     if (query) {
-            const searchSections = document.getElementById("search-sections"); // add this
-    searchSections.style.display = "block";  
-
-        searchTitle.textContent = `Results for "${query}"`;
-        searchTitle.style.display = "block";
-        searchContainer.style.display = "grid";
+        searchSections.style.display = "block";
         defaultSections.style.display = "none";
+        searchTitle.textContent = `Results for "${query}"`;
 
         for (const item of listings) {
             const response = await fetch(`/api/Listing/${item.id}`);
-            const images = (await response.json()).images ?? [];
-            searchContainer.insertAdjacentHTML("beforeend", createCard(item, images));
+            const data = await response.json();
+            const images = data.images ?? [];
+            const average_rating = data.average_rating ?? -1;
+            searchContainer.insertAdjacentHTML("beforeend", createCard(item, images, average_rating));
         }
 
     } else {
+        searchSections.style.display = "none";
         defaultSections.style.display = "block";
 
         for (const item of listings) {
             const response = await fetch(`/api/Listing/${item.id}`);
-            const images = (await response.json()).images ?? [];
+            const data = await response.json();
+            const images = data.images ?? [];
+            const average_rating = data.average_rating ?? -1;
             const loc = item.carLocation?.trim().toLowerCase();
 
             if (loc?.includes(userLocation)) {
-                listing_container.insertAdjacentHTML("beforeend", createCard(item, images));
+                listing_container.insertAdjacentHTML("beforeend", createCard(item, images, average_rating));
             }
 
-            const enriched = { item, images };
+            const enriched = { item, images, average_rating };
             if (loc?.includes("salthill")) groups.salthill.push(enriched);
             if (loc?.includes("tuam")) groups.tuam.push(enriched);
         }
