@@ -8,7 +8,7 @@ sidebar_overlay.innerHTML = `
         <div><image id="close-sidebar-button" src="/images/menu.svg" style="width: 40px; height: 40px; cursor: pointer"/></div>
         <a href="/" style="font-size: 16px"><p>Home</p></a>
         <a href="/create-listing" style="font-size: 16px"><p>Create a listing</p></a>
-        <a href="/booking-history style="font-size: 16px"><p>Booking history</p></a>
+        <a href="/booking-history" style="font-size: 16px"><p>Booking history</p></a>
         <a href="/" style="font-size: 16px"><p>My listings</p></a>
     </div>
 `;
