@@ -2,7 +2,7 @@ import { get_location } from './location.js'
 import { shake_element } from './common.js'
 import { getUserId } from './auth.js'
 
-const location_text = document.getElementById("location-text");   
+const location_input = document.getElementById("location-input");   
 const create_button = document.getElementById("create-button");   
 const name_input = document.getElementById("name-input");   
 const year_input = document.getElementById("year-input");   
@@ -18,14 +18,26 @@ const price_error_text = document.getElementById("price-error-text");
 const start_date_error_text = document.getElementById("start-date-error-text");   
 const end_date_error_text = document.getElementById("end-date-error-text");   
 const images_input_error_text = document.getElementById("images-input-error-text");   
-
+const location_error_text = document.getElementById("location-error-text");
 let userLocation = "";
 
-get_location((location) => {
+/*get_location((location) => {
     userLocation = location;
     location_text.textContent = "Location: " + location;
 });
+*/
 
+function getting_location() {
+    const value = location_input.value.trim().toLowerCase();
+
+    if (value === "")
+        return { error: "Location must not be empty" };
+
+    if (value.length > 150)
+        return { error: "Location is too long" };
+
+    return { value: value };
+}
 
 function get_title() {
     const value = name_input.value.trim();
@@ -124,6 +136,8 @@ create_button.addEventListener("click", async () => {
     const price = handle_error(get_price(), price_error_text, () => has_error = true);
     const dates = handle_error(get_dates(), start_date_error_text, () => has_error = true);
     const image_files = handle_error(get_image_files(), images_input_error_text, () => has_error = true);
+    const location = handle_error(getting_location(), location_error_text, () => has_error = true);
+
 
     if (has_error)
         return;
@@ -151,7 +165,7 @@ create_button.addEventListener("click", async () => {
         year: parseInt(year.value),
         startDate: dates.start,
         endDate: dates.end,
-        carLocation: userLocation,
+        carLocation: location.value,
         images: (await image_upload_request.json()).urls,
     };
 

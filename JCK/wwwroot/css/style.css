@@ -462,7 +462,21 @@ input[type="date"] {
     box-shadow: 0 0 20px 5px rgba(0, 0, 0, 0.08);
 }
 
-#listing-container {
+#listing-container{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 24px;
+    padding-bottom: 40px;
+}
+
+.listing-grid{
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 24px;
+    padding-bottom: 40px;
+}
+
+.search-container{
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 24px;

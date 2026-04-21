@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>JCK</title>
-    <!--need to add some sort of version thing to avoid browser caching css style sheet-->
-    <link rel="stylesheet" href="css/style.css?v=11">
+    <link rel="stylesheet" href="css/style.css?v=12">
 </head>
 
 <body>
@@ -17,10 +16,32 @@
     <div id="sidebar"></div>
     <div id="navbar"></div>
 
-    <!-- Main Container -->
-    <div class="main-container">
-        <h1 id="title">Cars nearby</h1>
-        <div id="listing-container"></div>
+    <div id="user-button" style="position: fixed; top: 20px; right: 20px; z-index: 1000;"></div>
+
+    <!-- Search state -->
+    <div id="search-sections" style="display:none">
+        <div class="main-container">
+            <h1 id="search-title"></h1>
+            <div id="search-container" class="listing-grid"></div>
+        </div>
+    </div>
+
+    <!-- Default state -->
+    <div id="default-sections">
+        <div class="main-container">
+            <h1 id="title">Cars</h1>
+            <div id="listing-container"></div>
+        </div>
+
+        <div class="main-container">
+            <h1>Salthill</h1>
+            <div id="salthill-container" class="listing-grid"></div>
+        </div>
+
+        <div class="main-container">
+            <h1>Tuam</h1>
+            <div id="tuam-container" class="listing-grid"></div>
+        </div>
     </div>
 
     <script type="module" src="/js/auth-setup.js"></script>
