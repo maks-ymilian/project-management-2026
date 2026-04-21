@@ -469,6 +469,10 @@ input[type="date"] {
     padding-bottom: 40px;
 }
 
+#listing-container > *, .listing-grid > * {
+    max-width: 300px;
+}
+
 .listing-grid{
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
