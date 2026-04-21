@@ -12,21 +12,30 @@ try {
 
     let listing;
     let reviewData;
+    let userBooking = null;
 
-    try 
-    {
+    try {
         const response = await fetch(`/api/Listing/${id}`);
         if (!response.ok)
-        throw new Error("Listing not found");
+            throw new Error("Listing not found");
 
         listing = await response.json();
 
         const reviewsResponse = await fetch(`/api/Reviews?listingId=${id}`);
 
         if (!reviewsResponse.ok)
-        throw new Error("Could not load reviews");
+            throw new Error("Could not load reviews");
 
         reviewData = await reviewsResponse.json();
+
+        const userBookingResponse = await fetch(`/api/checkout?listing_id=${id}&user_id=${getUserId()}`);
+        if (userBookingResponse.ok) {
+            userBooking = await userBookingResponse.json();
+            if (!userBooking.confirmed)
+                userBooking = null;
+        }
+        else if (userBookingResponse.status !== 404)
+            throw new Error("Could not load user booking");
     } 
     catch (error) 
     {
@@ -41,27 +50,28 @@ try {
     const owner_image = user.imageUrl ? user.imageUrl : "/images/user.jpg";
     const description = listing.description;
 
-    const average_rating = reviewData.averageRating;
-    const eligible_for_review = true; // todo this boolean is what shows the review posting box. it should be set here based on if the user booked this car before
-
     const price_per_day = listing.pricePerDay;
     const available_start_date = new Date(listing.availableStartDate);
     const available_end_date = new Date(listing.availableEndDate);
 
-    //const reviews = [
-        //{rating: 3, date: new Date(2025, 11, 10), name: "reviewer", profile_image:"../images/car4.webp", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."},
-       // {rating: 1, date: new Date(2025, 11, 10), name: "guy", profile_image:"../images/user.jpg", text: "he scammed me"},
-       // {rating: 5, date: new Date(2025, 11, 10), name: "guy", profile_image:"../images/user.jpg", text: "amazing car"},
-       // {rating: 3, date: new Date(2025, 11, 10), name: "guy", profile_image:"../images/user.jpg", text: "llongwordlongwordlongwordlongwordlongwordlongwordlongwordongword"},
-       // {rating: 1, date: new Date(2025, 11, 10), name: "guy", profile_image:"../images/user.jpg", text: "he scammed me"},
-        //{rating: 3, date: new Date(2025, 11, 10), name: "guy", profile_image:"../images/user.jpg", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."},
-        //{rating: 1, date: new Date(2025, 11, 10), name: "guy", profile_image:"../images/user.jpg", text: "he scammed me"},
-       // {rating: 5, date: new Date(2025, 11, 10), name: "guy", profile_image:"../images/user.jpg", text: "i would never create an alt account to boost my rating"},
-    //];
+    let reviews = [];
+    let has_review_by_current_user = false;
+    for (let i = 0; i < reviewData.reviews.length; ++i) {
+        if (!has_review_by_current_user && reviewData.reviews[i].userId === getUserId())
+            has_review_by_current_user = true;
 
-    // ^ Saving current data in case of a error
+        const user = await getUser(reviewData.reviews[i].userId);
+        reviews[i] = {
+            rating: reviewData.reviews[i].rating,
+            date: reviewData.reviews[i].createdAt,
+            name: user.username,
+            profile_image: user.imageUrl ? user.imageUrl : "/images/user.jpg",
+            text: reviewData.reviews[i].text,
+        };
+    }
+    const average_rating = reviewData.averageRating;
+    const eligible_for_review = !has_review_by_current_user && userBooking !== null;
 
-    const reviews = reviewData.reviews;
     const images = listing.images ?? []; //Added to avoid crash if we have no image
 
     document.title = car_name + " | JCK";
@@ -100,14 +110,20 @@ try {
     price_text.innerHTML = `&euro;`;
     price_text.append(`${price_per_day} / day`);
 
-    const now = new Date();//Declaring date once over calling it multiple times to cause errors when the date changes while the user has the page open
-    if (available_start_date < now && available_end_date < now)
-    {
-        availability_text.textContent = "This car is not available.";
+    if (userBooking !== null) {
+        availability_text.textContent = `You booked this car for ${format_date_range(userBooking.startDate, userBooking.endDate)}`;
         booking_ui.style.display = "none";
     }
-    else
-        availability_text.textContent = `Available ${format_date_range(available_start_date, available_end_date)}`;
+    else {
+        const now = new Date();//Declaring date once over calling it multiple times to cause errors when the date changes while the user has the page open
+        if (available_start_date < now && available_end_date < now)
+        {
+            availability_text.textContent = "This car is not available.";
+            booking_ui.style.display = "none";
+        }
+        else
+            availability_text.textContent = `Available ${format_date_range(available_start_date, available_end_date)}`;
+    }
 
     let selected_num_stars = -1; // -1 to indicate not selected yet
 
@@ -214,8 +230,8 @@ try {
         reviews_container.insertAdjacentHTML("beforeend", `
             <div class="card">
                 <div class="labeled-avatar">
-                    <img src="${escape_html(review.reviewerProfileImage)}">
-                    <p>${escape_html(review.reviewerName)}</p>
+                    <img src="${escape_html(review.profile_image)}">
+                    <p>${escape_html(review.name)}</p>
                 </div>
                 <div class="star-rating-date-combo">
                     <div class="star-rating">
@@ -225,14 +241,14 @@ try {
                         <svg class="star ${review.rating >= 4 ? "" : "missing-star"}"><use href="#star"></use></svg>
                         <svg class="star ${review.rating >= 5 ? "" : "missing-star"}"><use href="#star"></use></svg>
                     </div>
-                    <p>&middot; ${escape_html(new Date(review.createdAt).toLocaleDateString(undefined, {year: "numeric", month: "long", day: "numeric"}))}</p>
+                    <p>&middot; ${escape_html(new Date(review.date).toLocaleDateString(undefined, {year: "numeric", month: "long", day: "numeric"}))}</p>
                 </div>
                 <p>${escape_html(review.text)}</p>
             </div>
         `);
     });
 
-    reviews_title_text.textContent = `${reviews.length} reviews`;
+    reviews_title_text.textContent = `${reviews.length} review` + (reviews.length === 1 ? "" : "s");
     average_rating_text.textContent = `${average_rating}`;
 
     if (reviews.length === 0)
@@ -265,33 +281,27 @@ try {
         if (!error)
         {
             fetch("/api/Reviews", {
-            method: "POST",
-            headers: 
-            {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                listingId: Number(id),
-                rating: selected_num_stars + 1,
-                text: review_text_area.value.trim(),
-                reviewerName: "Anonymous",
-                reviewerProfileImage: "../images/user.jpg"
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    listingId: Number(id),
+                    rating: selected_num_stars + 1,
+                    text: review_text_area.value.trim(),
+                    userId: getUserId(),
+                })
             })
-        })
-        .then(response => {
-            if (!response.ok)
-                throw new Error("Failed to post review");
+            .then(response => {
+                if (!response.ok)
+                    throw new Error("Failed to post review");
 
-            review_text_area.value = "";
-            location.reload();
-        })
-        .catch(error => {
-            alert("Could not post review.");
-            console.error(error);
-        });
-        //review_text_area.value = "";
-        //location.reload(); // refresh the page
-    }
+                review_text_area.value = "";
+                location.reload();
+            })
+            .catch(error => {
+                alert("Could not post review.");
+                console.error(error);
+            });
+        }
     });
 
     function update_book_ui(user_action = true, is_final_click = false)

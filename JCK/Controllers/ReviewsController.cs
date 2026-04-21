@@ -15,8 +15,7 @@ public class ReviewsController : ControllerBase
         int ListingId,
         int Rating,
         string Text,
-        string? ReviewerName,
-        string? ReviewerProfileImage
+        string userId
     );
 
     [HttpGet]
@@ -34,14 +33,13 @@ public class ReviewsController : ControllerBase
                 listingId = r.ListingId,
                 rating = r.Rating,
                 createdAt = r.CreatedAt,
-                reviewerName = r.ReviewerName,
-                reviewerProfileImage = r.ReviewerProfileImage,
+                userId = r.UserId,
                 text = r.Text
             })
             .ToListAsync();
 
         var averageRating = reviews.Count == 0
-            ? 0
+            ? -1
             : reviews.Average(r => r.rating);
 
         return Ok(new
@@ -75,8 +73,7 @@ public class ReviewsController : ControllerBase
             ListingId = request.ListingId,
             Rating = request.Rating,
             Text = request.Text.Trim(),
-            ReviewerName = string.IsNullOrWhiteSpace(request.ReviewerName) ? "Anonymous" : request.ReviewerName.Trim(),
-            ReviewerProfileImage = string.IsNullOrWhiteSpace(request.ReviewerProfileImage) ? "/images/user.jpg" : request.ReviewerProfileImage.Trim(),
+            UserId = request.userId,
             CreatedAt = DateTime.UtcNow
         };
 

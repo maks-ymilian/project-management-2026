@@ -12,6 +12,16 @@ public class CheckoutController : ControllerBase
         _context = context;
     }
 
+    [HttpGet]
+    public async Task<IActionResult> GetUserBooking(int listing_id, string user_id)
+    { 
+        Booking? booking = await _context.Bookings.FirstOrDefaultAsync(x => x.UserId == user_id && x.ListingId == listing_id);
+        if (booking == null)
+            return NotFound();
+
+        return Ok(booking);
+    }
+
     public class BookingRequest
     {
         public int listing_id { get; set; }

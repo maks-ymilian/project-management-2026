@@ -13,12 +13,9 @@ public class Review
     [StringLength(2000)]
     public string Text { get; set; } = string.Empty;
 
-
     public DateTime CreatedAt{ get; set; } = DateTime.UtcNow;
 
+    [Required]
     [StringLength(200)]
-    public string ReviewerName { get; set; } = "Anonymous";
-
-    [StringLength(500)]
-    public string ReviewerProfileImage { get; set; } = "/images/user.jpg";
+    public string UserId { get; set; } = string.Empty;
  }

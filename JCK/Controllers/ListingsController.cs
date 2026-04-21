@@ -115,6 +115,12 @@ public class ListingController : ControllerBase // inherits from controller base
         if (listing == null)
             return NotFound();
 
+        var reviews = await _context.Reviews
+            .Where(r => r.ListingId == id)
+            .Select(r => r.Rating)
+            .ToListAsync();
+        var averageRating = reviews.Count == 0 ? -1 : reviews.Average();
+
         return Ok(new
         {
             userId = listing.UserId,
@@ -124,6 +130,7 @@ public class ListingController : ControllerBase // inherits from controller base
             availableStartDate = listing.StartDate,
             availableEndDate = listing.EndDate,
             images = GetListingImageURLs(listing.Id),
+            review = averageRating,
         });
     }
 

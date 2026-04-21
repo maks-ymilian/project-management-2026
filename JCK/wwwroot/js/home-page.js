@@ -39,7 +39,7 @@ window.toggleHeart = function(id, e) {
     document.getElementById('heart-' + id).classList.toggle('liked', likedSet.has(id));
 };
 
-function createCard(item, images) {
+function createCard(item, images, average_rating) {
     cardStates[item.id] = 0;
 
     const slides = images.length > 0
@@ -73,10 +73,12 @@ function createCard(item, images) {
                 <div class="card-info">
                     <div class="card-row">
                         <span class="card-title">${item.carName}</span>
-                        <span class="card-rating">
-                            <svg width="11" height="11" viewBox="0 0 12 12" fill="#222"><path d="M6 1l1.4 2.8 3.1.4-2.25 2.2.53 3.1L6 8l-2.78 1.5.53-3.1L1.5 4.2l3.1-.4z"/></svg>
-                            ${item.review ?? 'New'}
-                        </span>
+                        ${average_rating === -1 ? "" : `
+                            <span class="card-rating" style="font: inherit; font-size: 14px; margin-right: 5px">
+                                <svg width="14" height="14" viewBox="0 0 12 12" fill="#222"><path d="M6 1l1.4 2.8 3.1.4-2.25 2.2.53 3.1L6 8l-2.78 1.5.53-3.1L1.5 4.2l3.1-.4z"/></svg>
+                                ${average_rating.toFixed(2)}
+                            </span>
+                        `}
                     </div>
                     <div class="card-sub">${format_date_range(item.startDate, item.endDate, true)}</div>
                     <div class="card-price"><strong>&euro;${item.price}</strong> / day</div>
@@ -91,10 +93,12 @@ const listings = await fetchListings(params.get("search"));
 
 listings.forEach(async item => {
     const response = await fetch(`/api/Listing/${item.id}`);
-    if (!response.ok) console.log(`couldn't get images: ${response.status}`);
-    const images = (await response.json()).images ?? [];
+    if (!response.ok) console.log(`couldn't get listing info: ${response.status}`);
+    const json = await response.json();
+    const images = json.images ?? [];
+    const average_rating = json.review;
 
-    listing_container.insertAdjacentHTML("beforeend", createCard(item, images));
+    listing_container.insertAdjacentHTML("beforeend", createCard(item, images, average_rating));
 });
 
 get_location((location) => {
