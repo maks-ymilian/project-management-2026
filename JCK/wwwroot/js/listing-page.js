@@ -5,10 +5,17 @@ try {
     const params = new URLSearchParams(window.location.search);
     const id = params.get("id");
     const checkout_state = params.get("checkout_state");
-    if (checkout_state === "success")
-        alert("Car successfully booked. You can find it in your booking history");
-    else if (checkout_state === "cancel")
-        alert("Booking cancelled");
+    if (checkout_state !== undefined) {
+        if (checkout_state === "success")
+            alert("Car successfully booked. You can find it in your booking history");
+        else if (checkout_state === "cancel")
+            alert("Booking cancelled");
+
+        // remove query param so a refresh doesnt bring up the alert again
+        const url = new URL(window.location.href);
+        url.searchParams.delete("checkout_state");
+        window.history.replaceState({}, '', url);
+    }
 
     let listing;
     let reviewData;
