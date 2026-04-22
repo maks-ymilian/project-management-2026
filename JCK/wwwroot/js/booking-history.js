@@ -29,7 +29,8 @@ async function loadBookingHistory() {
                     <p><strong>Start:</strong> ${new Date(booking.startDate).toLocaleDateString()}</p>
                     <p><strong>End:</strong> ${new Date(booking.endDate).toLocaleDateString()}</p>
 
-                    <div class="price">€${booking.price}</div>
+                    <div class="price">Price per day: €${booking.price}</div>
+                    <div class="price">Amount paid: €${booking.amountPaid}</div>
 
                     <div class="status">
                         Status: ${booking.confirmed ? "Confirmed" : "Pending"}

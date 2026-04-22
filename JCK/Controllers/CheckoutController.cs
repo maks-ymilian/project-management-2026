@@ -54,6 +54,10 @@ public class CheckoutController : ControllerBase
             EndDate = DateOnly.FromDateTime(data.end_date),
             Confirmed = false,
         };
+        int num_days = (booking.EndDate.DayNumber - booking.StartDate.DayNumber) + 1;
+        booking.AmountPaid = listing.Price * num_days;
+        long price = (long)booking.AmountPaid * 100;
+
         if (existing_booking == null)
             _context.Bookings.Add(booking);
         else
@@ -62,9 +66,6 @@ public class CheckoutController : ControllerBase
             _context.Entry(existing_booking).CurrentValues.SetValues(booking);
         }
         await _context.SaveChangesAsync();
-
-        int num_days = (booking.EndDate.DayNumber - booking.StartDate.DayNumber) + 1;
-        long price = (long)listing.Price * num_days * 100;
 
         try
         {
@@ -149,7 +150,8 @@ public class CheckoutController : ControllerBase
                     EndDate = booking.EndDate,
                     Confirmed = booking.Confirmed,
                     CarName = listing.CarName,
-                    Price = listing.Price
+                    AmountPaid = booking.AmountPaid,
+                    Price = listing.Price,
                 })
             .ToListAsync();
 
