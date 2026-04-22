@@ -1,25 +1,13 @@
-import { getToken } from "./auth.js";
-
-
-
+import { getUserId } from "./auth.js";
 
 const container = document.getElementById("booking-container");
 
 async function loadBookingHistory() {
     try {
-        const token = await getToken();
-
-         const response = await fetch("/history", {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-
-        if (!response.ok) {
-            container.innerHTML = "<p>You are not logged in.</p>";
-            return;
-        }
-
+        const userId = await getUserId();
+        const response = await fetch(`/api/checkout/history?userId=${userId}`);
+        if (!response.ok)
+            throw new Error("Couldn't get history: " + response);
 
         const data = await response.json();
 
@@ -31,19 +19,21 @@ async function loadBookingHistory() {
         container.innerHTML = "";
 
         data.forEach(booking => {
-            const card = document.createElement("div");
-            card.className = "booking-card";
-
+            const card = document.createElement("a");
+            card.style = "margin: 0";
+            card.href = `/listing?id=${booking.listingId}`;
             card.innerHTML = `
-                <div class="car-name">${booking.carName}</div>
+                <div class="booking-card">
+                    <div class="car-name">${booking.carName}</div>
 
-                <p><strong>Start:</strong> ${new Date(booking.startDate).toLocaleDateString()}</p>
-                <p><strong>End:</strong> ${new Date(booking.endDate).toLocaleDateString()}</p>
+                    <p><strong>Start:</strong> ${new Date(booking.startDate).toLocaleDateString()}</p>
+                    <p><strong>End:</strong> ${new Date(booking.endDate).toLocaleDateString()}</p>
 
-                <div class="price">€${booking.price}</div>
+                    <div class="price">€${booking.price}</div>
 
-                <div class="status">
-                    Status: ${booking.confirmed ? "Confirmed" : "Pending"}
+                    <div class="status">
+                        Status: ${booking.confirmed ? "Confirmed" : "Pending"}
+                    </div>
                 </div>
             `;
 

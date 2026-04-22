@@ -133,12 +133,9 @@ public class CheckoutController : ControllerBase
         return Ok();
     }
 
-    [Authorize]
     [HttpGet("history")]
-    public async Task<IActionResult> GetHistory()
+    public async Task<IActionResult> GetHistory(string userId)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
         var history = await _context.Bookings
             .Where(b => b.UserId == userId && b.Confirmed)
             .Join(_context.Listings,
