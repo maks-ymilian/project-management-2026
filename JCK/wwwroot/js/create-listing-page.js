@@ -1,6 +1,7 @@
-import { get_location } from './location.js'
+//import { get_location } from './location.js'
 import { shake_element } from './common.js'
 import { getUserId } from './auth.js'
+import { getLocation } from './google-location-store.js';
 
 const location_input = document.getElementById("location-input");   
 const create_button = document.getElementById("create-button");   
@@ -19,6 +20,10 @@ const start_date_error_text = document.getElementById("start-date-error-text");
 const end_date_error_text = document.getElementById("end-date-error-text");   
 const images_input_error_text = document.getElementById("images-input-error-text");   
 const location_error_text = document.getElementById("location-error-text");
+
+
+console.log("script loaded");
+
 let userLocation = "";
 
 /*get_location((location) => {
@@ -115,6 +120,19 @@ function get_image_files() {
     return { value: value }
 }
 
+
+function get_google_location(){
+const loc = getLocation();
+    console.log("location at submit time:", loc);
+
+
+    if (!loc) {
+        return { error: "Please select a location from the map" };
+    }
+
+    return { value: loc };
+}
+
 function handle_error(value, error_text, on_error) {
     if ("error" in value) {
         error_text.textContent = value.error;
@@ -136,26 +154,26 @@ create_button.addEventListener("click", async () => {
     const price = handle_error(get_price(), price_error_text, () => has_error = true);
     const dates = handle_error(get_dates(), start_date_error_text, () => has_error = true);
     const image_files = handle_error(get_image_files(), images_input_error_text, () => has_error = true);
-    const location = handle_error(getting_location(), location_error_text, () => has_error = true);
+    const google_location = handle_error(get_google_location(), location_error_text, () => has_error = true);
+    console.log("2 - validation done, has_error:", has_error);
 
-
-    if (has_error)
-        return;
+    if (has_error) return;
 
     const form_data = new FormData();
     for (const file of image_files.value)
         form_data.append("files", file);
 
     const image_upload_request = await fetch("/api/images/upload", {method: "POST", body: form_data});
-    if (!image_upload_request.ok)
-    {
+
+    if (!image_upload_request.ok) {
         alert("failed to upload images");
-        throw new Error("Upload failed");
+        return;
     }
+    console.log("5 - past image upload");
 
     const user_id = getUserId();
-    if (!user_id)
-        throw new Error("Not signed in");
+
+    if (!user_id) throw new Error("Not signed in");
 
     const listing = {
         userId: user_id,
@@ -165,9 +183,14 @@ create_button.addEventListener("click", async () => {
         year: parseInt(year.value),
         startDate: dates.start,
         endDate: dates.end,
-        carLocation: location.value,
+       carLocation: google_location.value.address,  // was using old text input before
+    latitude: google_location.value.lat,          // these were already correct
+    longitude: google_location.value.lng,
+    address: google_location.value.address,
+
         images: (await image_upload_request.json()).urls,
     };
+
 
     //post logic 
     fetch("/api/listing", {

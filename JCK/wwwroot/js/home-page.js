@@ -31,16 +31,27 @@ function render(container, data) {
 
 async function fetchListings(query) {
     try {
-        let response;
-        if (query)
-            response = await fetch(`/api/listing/search?query=${encodeURIComponent(query)}`);
-        else
-            response = await fetch("/api/Listing");
+        const params = new URLSearchParams(window.location.search);
+        const lat = params.get("lat");
+        const lng = params.get("lng");
+        const radiusKm = params.get("radiusKm") ?? 20;
 
+        let url;
+        if (lat && lng) {
+            const base = `/api/listing/search?lat=${lat}&lng=${lng}&radiusKm=${radiusKm}`;
+            url = query ? `${base}&query=${encodeURIComponent(query)}` : base;
+        } else if (query) {
+            url = `/api/listing/search?query=${encodeURIComponent(query)}`;
+        } else {
+            url = `/api/Listing`;
+        }
+
+        const response = await fetch(url);
         if (!response.ok) throw new Error(`${response.status}`);
         return await response.json();
     } catch (err) {
         console.error('Error fetching listings:', err);
+        return [];
     }
 }
 
@@ -112,40 +123,83 @@ function createCard(item, images, average_rating) {
 
 async function loadListings() {
     const params = new URLSearchParams(window.location.search);
-    const query = params.get("search");
-    const listings = await fetchListings(query);
+    const query = params.get("search") || "";
+    const lat = params.get("lat");
+    const lng = params.get("lng");
 
     const searchTitle = document.getElementById("search-title");
     const searchContainer = document.getElementById("search-container");
     const searchSections = document.getElementById("search-sections");
     const defaultSections = document.getElementById("default-sections");
 
-    if (query) {
+    if (lat && lng) {
+        searchSections.style.display = "block";
+        defaultSections.style.display = "none";
+
+        if (query) {
+            searchTitle.textContent = `Results for "${query}" near you`;
+        } else {
+            searchTitle.textContent = `Cars within 20km of you`;
+        }
+
+        const listings = await fetchListings(query);
+
+        if (!listings || listings.length === 0) {
+            searchContainer.innerHTML = `
+                <div style="padding: 40px; text-align: center; font-size: 16px; color: #666;">
+                    No cars found within 20km of that location.
+                </div>`;
+            return;
+        }
+
+        const detailed = await Promise.all(
+            listings.map(item => fetch(`/api/Listing/${item.id}`).then(r => r.json()))
+        );
+
+        for (const data of detailed) {
+            const images = data.images ?? [];
+            const average_rating = data.average_rating ?? -1;
+            searchContainer.insertAdjacentHTML("beforeend", createCard(data, images, average_rating));
+        }
+
+    } else if (query) {
         searchSections.style.display = "block";
         defaultSections.style.display = "none";
         searchTitle.textContent = `Results for "${query}"`;
 
-        for (const item of listings) {
-            const response = await fetch(`/api/Listing/${item.id}`);
-            const data = await response.json();
+        const listings = await fetchListings(query);
+
+        if (!listings || listings.length === 0) {
+            searchContainer.innerHTML = `
+                <div style="padding: 40px; text-align: center; font-size: 16px; color: #666;">
+                    No cars found for that search.
+                </div>`;
+            return;
+        }
+
+        const detailed = await Promise.all(
+            listings.map(item => fetch(`/api/Listing/${item.id}`).then(r => r.json()))
+        );
+
+        for (const data of detailed) {
             const images = data.images ?? [];
-            const average_rating = (data.average_rating !== undefined && data.average_rating !== null)
-            ? data.average_rating
-             : -1
-            searchContainer.insertAdjacentHTML("beforeend", createCard(item, images, average_rating));
+            const average_rating = data.average_rating ?? -1;
+            searchContainer.insertAdjacentHTML("beforeend", createCard(data, images, average_rating));
         }
 
     } else {
         searchSections.style.display = "none";
         defaultSections.style.display = "block";
 
+        const listings = await fetchListings(null);
+
         for (const item of listings) {
             const response = await fetch(`/api/Listing/${item.id}`);
             const data = await response.json();
             const images = data.images ?? [];
             const average_rating = (data.review !== undefined && data.review !== null)
-            ? data.review
-             : -1
+                ? data.review
+                : -1;
             const loc = item.carLocation?.trim().toLowerCase();
 
             if (loc?.includes(userLocation)) {

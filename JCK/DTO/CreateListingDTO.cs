@@ -15,6 +15,11 @@ namespace JCK.DTO
         public string CarLocation { get; set; } = string.Empty;
         public DateOnly StartDate { get; set; }
         public DateOnly EndDate { get; set; }
+
+        public double Latitude {get; set;}
+        public double Longitude {get; set;}
+        public string Address {get; set;} = string.Empty;
+
         public List<string> Images { get; set; } = [];
     }
 }

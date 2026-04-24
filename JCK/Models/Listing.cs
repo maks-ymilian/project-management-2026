@@ -11,5 +11,11 @@ public class Listing
     public string CarLocation { get; set; } = string.Empty;
     public DateOnly StartDate { get; set; }
     public DateOnly EndDate { get; set; }
+
+    //map
+    public double Latitude {get; set;}
+    public double Longitude {get; set;}
+    public string Address {get; set;} = string.Empty;
+
     public bool IsAvailable { get; set; } = true;
 }

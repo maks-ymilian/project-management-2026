@@ -1,0 +1,105 @@
+
+.header-bar {
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 999;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05);
+    padding: 12px 20px;
+    gap: 16px;
+    display: flex;
+    align-items: center;
+}
+
+.searchBar {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    gap: 0;
+    max-width: 600px;
+
+     margin: 0 16px 0 auto;  /* push it left with a fixed left margin */
+
+    border: 1px solid rgba(0,0,0,0.12);
+    border-radius: 9999px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    overflow: hidden;
+    background: white;
+    transition: box-shadow 0.2s ease;
+}
+
+.searchBar:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.14);
+}
+
+/* Car name input */
+.searchBar #searchBox {
+    flex: 1;
+    min-width: 0;
+    max-width: none;
+    width: auto;
+    padding: 10px 18px;
+    font-size: 14px;
+    border: none;
+    border-right: 1px solid rgba(0,0,0,0.10);
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    outline: none;
+    transform: none;
+}
+
+.searchBar #searchBox:hover {
+    box-shadow: none;
+    transform: none;
+}
+
+.searchBar #searchBox:focus {
+    border: none;
+    border-right: 1px solid rgba(0,0,0,0.10);
+    box-shadow: none;
+}
+
+/* ── Location picker: strip the internal input styling ── */
+#navbar-location-search {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    --gmpx-color-surface: transparent;
+    --gmpx-color-outline: transparent;
+    --gmpx-color-on-surface: #222;
+    --gmpx-color-on-surface-variant: #999;
+    --gmpx-font-family-base: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+    --gmpx-font-size-base: 14px;
+    --gmpx-border-radius-container: 0px;
+    box-shadow: none !important;
+    border: none !important;
+    background: transparent !important;
+}
+
+/* This is the key — target the actual rendered input inside the component */
+#navbar-location-search > * {
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+}
+/* Style the autocomplete dropdown */
+#navbar-location-search::part(suggestion-list),
+.pac-container {
+    border-radius: 16px !important;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15) !important;
+    border: 1px solid rgba(0,0,0,0.08) !important;
+    overflow: hidden;
+    margin-top: 8px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px;
+}
+
+.pac-item {
+    padding: 10px 16px;
+    border-top: none;
+    cursor: pointer;
+}
+.pac-item:hover { background: #f5f5f5; }
+.pac-item-query { font-size: 14px; color: #222; }

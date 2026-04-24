@@ -35,26 +35,55 @@ public class ListingController : ControllerBase // inherits from controller base
 
     //search api call
     // GET /api/Listing/search?query=apartment
-    [HttpGet("search")]
-    public async Task<IActionResult> Search([FromQuery] string query)
-    {
-        // returns nothing 
-        if (string.IsNullOrWhiteSpace(query))
-            return Ok(new List<Listing>());
+[HttpGet("search")]
+public async Task<IActionResult> Search(
+    [FromQuery] string? query,
+    [FromQuery] double? lat,
+    [FromQuery] double? lng,
+    [FromQuery] double radiusKm = 20)
+{
+    // Start with all listings
+    var listings = await _context.Listings.ToListAsync();
 
-        var listings = await _context.Listings.Where(listing => listing.CarName.Contains(query.ToLower())).ToListAsync();
-        return Ok(listings.Select(listing => new
-        {
-            Id = listing.Id,
-            userId = listing.UserId,
-            carName = listing.CarName,
-            description = listing.Description,
-            price = listing.Price,
-            startDate = listing.StartDate,
-            endDate = listing.EndDate,
-            images = GetListingImageURLs(listing.Id),
-        }));
+    // Filter by name only if query is provided
+    if (!string.IsNullOrWhiteSpace(query))
+    {
+        listings = listings
+            .Where(l => l.CarName.ToLower().Contains(query.ToLower()))
+            .ToList();
     }
+
+    // Filter by radius if lat/lng provided
+    if (lat.HasValue && lng.HasValue)
+    {
+        listings = listings
+            .Where(l => Haversine(lat.Value, lng.Value, l.Latitude, l.Longitude) <= radiusKm)
+            .ToList();
+    }
+
+    return Ok(listings.Select(listing => new
+    {
+        id = listing.Id,
+        userId = listing.UserId,
+        carName = listing.CarName,
+        description = listing.Description,
+        price = listing.Price,
+        startDate = listing.StartDate,
+        endDate = listing.EndDate,
+        images = GetListingImageURLs(listing.Id),
+    }));
+}
+
+private static double Haversine(double lat1, double lng1, double lat2, double lng2)
+{
+    const double R = 6371; // Earth radius in km
+    var dLat = (lat2 - lat1) * Math.PI / 180;
+    var dLng = (lng2 - lng1) * Math.PI / 180;
+    var a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
+            Math.Cos(lat1 * Math.PI / 180) * Math.Cos(lat2 * Math.PI / 180) *
+            Math.Sin(dLng / 2) * Math.Sin(dLng / 2);
+    return R * 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+}
 
     [HttpGet("user")]
     public async Task<IActionResult> GetUserListings([FromQuery] string userId)
@@ -68,6 +97,8 @@ public class ListingController : ControllerBase // inherits from controller base
     [HttpPost]
     public async Task<IActionResult> CreateListing(CreateListingDTO dto)
     {
+
+
         var listing = new Listing
         {
             UserId = dto.UserId,
@@ -78,6 +109,12 @@ public class ListingController : ControllerBase // inherits from controller base
             CarLocation = dto.CarLocation,
             StartDate = dto.StartDate,
             EndDate = dto.EndDate,
+
+            Address = dto.Address,
+            Latitude = dto.Latitude,
+            Longitude = dto.Longitude,
+          
+
             IsAvailable = true
         };
         _context.Listings.Add(listing);

@@ -1,70 +1,101 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>JCK</title>
-    <link rel="stylesheet" href="../css/style.css">
-    <link rel="stylesheet" href="../css/create-listing.css">
-</head>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>JCK</title>
+        <link rel="stylesheet" href="../css/style.css">
+        <link rel="stylesheet" href="../css/create-listing.css">
+        <link rel="stylesheet" href="../css/map.css">
+    <script type="module"
+    src="https://ajax.googleapis.com/ajax/libs/@googlemaps/extended-component-library/0.6.11/index.min.js">
+    </script>
+    </head>
 
-<body>
-    <div id="sidebar"></div>
-    <div id="navbar"></div>
+    <body>
+        <div id="sidebar"></div>
+        <div id="navbar"></div>
 
-    <div class="container" style="display: flex; flex-direction: column; gap: 20px">
-        <h1 style="margin: 0">Create a new listing</h1>
-        <div style="display: flex; gap: 20px">
+        <div class="container" style="display: flex; flex-direction: column; gap: 20px">
+            <h1 style="margin: 0">Create a new listing</h1>
+            <div style="display: flex; gap: 20px">
+                <div style="flex: 1" class="error-container">
+                    <input id="name-input" type="text" placeholder="Name of your car" style="flex: 1">
+                    <p id="title-error-text" class="error error-text"></p>
+                </div>
+                <div class="error-container">
+                    <input id="year-input" type="number" placeholder="Year" style="width: 150px">
+                    <p id="year-error-text" class="error error-text"></p>
+                </div>
+            </div>
+            <div class="error-container" style="width: 100%">
+                <textarea id="description-input" placeholder="Describe your listing" style="min-height: 120px"></textarea>
+                <p id="description-error-text" class="error error-text"></p>
+            </div>
+            <div class="error-container">
+                <input id="price-input" type="number" placeholder="Price per day" style="width: 150px">
+                <p id="price-error-text" class="error error-text"></p>
+            </div>
+            <div style="display: flex; gap: 20px">
+                <div style="display: flex; flex-direction: column; gap: 5px; flex: 1">
+                    <p style="margin: 0">Start date</p>
+                    <div class="error-container">
+                        <input id="start-date-input" type="date">
+                        <p id="start-date-error-text" class="error error-text"></p>
+                    </div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 5px; flex: 1">
+                    <p style="margin: 0">End date</p>
+                    <div class="error-container">
+                        <input id="end-date-input" type="date">
+                        <p id="end-date-error-text" class="error error-text"></p>
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 5px">
+                <p style="margin: 0">Upload images</p>
+                <div class="error-container">
+                    <input id="images-input" type="file" multiple>
+                    <p id="images-input-error-text" class="error error-text"></p>
+                </div>
+            </div>
+
             <div style="flex: 1" class="error-container">
-                <input id="name-input" type="text" placeholder="Name of your car" style="flex: 1">
-                <p id="title-error-text" class="error error-text"></p>
-            </div>
-            <div class="error-container">
-                <input id="year-input" type="number" placeholder="Year" style="width: 150px">
-                <p id="year-error-text" class="error error-text"></p>
-            </div>
-        </div>
-        <div class="error-container" style="width: 100%">
-            <textarea id="description-input" placeholder="Describe your listing" style="min-height: 120px"></textarea>
-            <p id="description-error-text" class="error error-text"></p>
-        </div>
-        <div class="error-container">
-            <input id="price-input" type="number" placeholder="Price per day" style="width: 150px">
-            <p id="price-error-text" class="error error-text"></p>
-        </div>
-        <div style="display: flex; gap: 20px">
-            <div style="display: flex; flex-direction: column; gap: 5px; flex: 1">
-                <p style="margin: 0">Start date</p>
-                <div class="error-container">
-                    <input id="start-date-input" type="date">
-                    <p id="start-date-error-text" class="error error-text"></p>
-                </div>
-            </div>
-            <div style="display: flex; flex-direction: column; gap: 5px; flex: 1">
-                <p style="margin: 0">End date</p>
-                <div class="error-container">
-                    <input id="end-date-input" type="date">
-                    <p id="end-date-error-text" class="error error-text"></p>
-                </div>
-            </div>
-        </div>
-        <div style="display: flex; flex-direction: column; gap: 5px">
-            <p style="margin: 0">Upload images</p>
-            <div class="error-container">
-                <input id="images-input" type="file" multiple>
-                <p id="images-input-error-text" class="error error-text"></p>
-            </div>
+            <input id="location-input" type="text" placeholder="Location of your car" style="flex: 1">
+            <p id="location-error-text" class="error error-text"></p>
         </div>
 
-        <div style="flex: 1" class="error-container">
-        <input id="location-input" type="text" placeholder="Location of your car" style="flex: 1">
-        <p id="location-error-text" class="error error-text"></p>
-    </div>
 
-        <button id="create-button" style="margin: auto; width: 200px">Create listing</button>
-    </div>
+   <div class="error-container">
 
-    <script type="module" src="../js/auth-setup.js"></script>
-    <script type="module" src="../js/create-listing-page.js"></script>
-    <script type="module" src="../js/navbar.js"></script>
-</body>
-</html>
+    <gmpx-api-loader
+        key="AIzaSyAIdg9o8mM9lJM2kAI3RYJSnHuxBikRyGQ"
+        solution-channel="GMP_GE_mapsandplacesautocomplete_v2">
+    </gmpx-api-loader>
+
+    <gmp-map id="map"
+        center="53.270962,-9.062691"
+        zoom="12"
+        map-id="DEMO_MAP_ID">
+
+        <div slot="control-block-start-inline-start" class="place-picker-container">
+            <gmpx-place-picker id="place-picker" placeholder="Enter location of your car"></gmpx-place-picker>
+        </div>
+
+        <gmp-advanced-marker id="marker"></gmp-advanced-marker>
+
+    </gmp-map>
+
+    <p id="location-error-text" class="error error-text"></p>
+
+</div>
+
+    <button id="create-button" style="margin: auto; width: 200px">Create listing</button>
+        </div>
+
+        <script type="module" src="../js/auth-setup.js"></script>
+        <script type="module" src="../js/create-listing-page.js"></script>
+        <script type="module" src="../js/navbar.js"></script>
+        <script type="module" src="../js/google-map.js"></script>
+        <script type="module" src="../js/google-location-store.js"></script>
+    </body>
+    </html>

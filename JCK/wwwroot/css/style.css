@@ -480,12 +480,6 @@ input[type="date"] {
     padding-bottom: 40px;
 }
 
-.search-container{
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 24px;
-    padding-bottom: 40px;
-}
 
 #title {
     font-size: 22px;
@@ -505,4 +499,9 @@ input[type="date"] {
     color: #777;
     margin-bottom: 12px;
 }
+
+
+
+
+
 

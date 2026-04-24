@@ -18,7 +18,11 @@ const navbar = document.getElementById("navbar");
 navbar.classList.add("header-bar");
 navbar.innerHTML = `
     <image id="open-sidebar-button" src="/images/menu.svg" style="width: 40px; height: 40px; cursor: pointer"/>
-    <div class="searchBar"><input type="text" id="searchBox" placeholder="Search Near you" /></div>
+   <div class="searchBar">
+    <input type="text" id="searchBox" placeholder="Search cars..." />
+    <div style="width:1px; height:24px; background:rgba(0,0,0,0.12); flex-shrink:0;"></div>
+    <gmpx-place-picker id="navbar-location-search" placeholder="Search location"></gmpx-place-picker>
+</div>
     <div id="user-button" style="width: 40px; height: 40px; margin-left: auto; justify-content: center; transform: scale(1.2)"></div>
 `;
 
@@ -47,9 +51,101 @@ close_sidebar_button.addEventListener("click", () => close_sidebar());
 get_location((location) => searchBox.placeholder = "Search in " + location);
 
 searchBox.addEventListener("keyup", (event) => {
-    if (event.key !== "Enter")
-        return;
-
-    window.location.href = `/?search=${searchBox.value.trim()}`;
+    if (event.key !== "Enter") return;
+    doSearch();
 });
 
+
+// Wait for the component to upgrade and render
+customElements.whenDefined('gmpx-place-picker').then(() => {
+    const picker = document.getElementById('navbar-location-search');
+    
+    // ── strip default styles ──────────────────────────────────────────
+    const stripStyles = () => {
+        if (!picker.shadowRoot) return;
+        const style = document.createElement('style');
+        style.textContent = `
+    :host {
+        display: flex !important;
+        align-items: center !important;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        height: 48px !important;
+        flex: 1 !important;
+    }
+    input, [role="combobox"], .input-container, div[class] {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        outline: none !important;
+        padding: 0 14px !important;
+        font-size: 14px !important;
+        color: #222 !important;
+        height: 48px !important;
+        line-height: 48px !important;
+        width: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+    .icon, [class*="icon"] {
+        display: none !important;
+    }
+`;
+        picker.shadowRoot.appendChild(style);
+    };
+    stripStyles();
+    setTimeout(stripStyles, 100);
+
+    // ── location listener ─────────────────────────────────────────────
+  picker.addEventListener('gmpx-placechange', async (event) => {
+        const place = event.target.value;
+        if (!place) return;
+
+        await place.fetchFields({ fields: ["location", "formattedAddress"] });
+        const loc = place.location;
+        if (!loc) return;
+
+        const lat = typeof loc.lat === "function" ? loc.lat() : Number(loc.lat);
+        const lng = typeof loc.lng === "function" ? loc.lng() : Number(loc.lng);
+
+        window._pickedLocation = { lat, lng, address: place.formattedAddress ?? "" };
+
+        // trigger search immediately on dropdown select
+        doSearch();
+    });
+
+    // also listen for Enter inside the picker's shadow input
+    setTimeout(() => {
+        const shadowInput = picker.shadowRoot?.querySelector('input');
+        if (shadowInput) {
+            shadowInput.addEventListener('keydown', async (event) => {
+                if (event.key !== "Enter") return;
+                const locationText = shadowInput.value.trim();
+                if (!locationText) return;
+
+                const geocoder = new google.maps.Geocoder();
+                geocoder.geocode({ address: locationText }, (results, status) => {
+                    if (status === "OK" && results[0]) {
+                        const lat = results[0].geometry.location.lat();
+                        const lng = results[0].geometry.location.lng();
+                        window._pickedLocation = { lat, lng, address: locationText };
+                    }
+                    doSearch();
+                });
+            });
+        }
+    }, 200);
+});
+
+function doSearch() {
+    const loc = window._pickedLocation;
+    const query = searchBox.value.trim();
+    if (loc) {
+        window.location.href = `/?search=${query}&lat=${loc.lat}&lng=${loc.lng}&radiusKm=20`;
+    } else {
+        window.location.href = `/?search=${query}`;
+    }
+}
